@@ -16,7 +16,7 @@ classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "trai
               ]
 
 #RUNNING FROM WEBCAM
-cap=cv2.VideoCapture(0) #Caputre the frame
+cap=cv2.VideoCapture(1) #Caputre the frame
 cap.set(3,1280)#Resize the image's width
 cap.set(4,720)#Resize the image's height
 
