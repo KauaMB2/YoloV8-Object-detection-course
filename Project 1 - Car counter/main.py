@@ -4,6 +4,7 @@ import cv2#Import OpenCV
 import cvzone#Import CVzone library
 import math#Import math library
 from sort import *#Import short
+import time #import timer
  
 cap = cv2.VideoCapture("../Videos/cars.mp4")#Load the video file
 
@@ -32,6 +33,12 @@ totalCount = []#Array to count the vehicules
  
 while True:
     success, img = cap.read()#Read the image
+    cTime=0
+    pTime=0
+    cTime=time.time()
+    fps=int(1/(cTime-pTime))
+    pTime=cTime
+    cv2.putText(img,f"FPS: {(fps)}",(img.shape[1]-220,70),cv2.FONT_HERSHEY_PLAIN,3,(255,0,255),3)#putText(frame,text,(positionX,positionY),font,tamanho,(B,G,R),espessura)
     mask_resized = cv2.resize(mask, (img.shape[1], img.shape[0]))#Resize the mask
     imgRegion = cv2.bitwise_and(img, mask_resized)#Apply the betwise operator between the frame and the mask
  
@@ -82,7 +89,8 @@ while True:
                 cv2.line(img, (limits[0], limits[1]), (limits[2], limits[3]), (0, 255, 0), 5)#Overlay the red line
  
     cv2.putText(img,str(len(totalCount)),(255,100),cv2.FONT_HERSHEY_PLAIN,5,(50,50,255),8)#Put the counter text
- 
+    key=cv2.waitKey(1)#ESC = 27
+    if key==27:#Se apertou o ESC
+        break
     cv2.imshow("Image", img)
     # cv2.imshow("ImageRegion", imgRegion)
-    cv2.waitKey(1)

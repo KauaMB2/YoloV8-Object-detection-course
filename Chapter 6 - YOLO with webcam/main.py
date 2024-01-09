@@ -2,6 +2,7 @@ from ultralytics import YOLO #Import the YOLOV8 library
 import cv2#Import OpenCV
 import cvzone#Import cvzone library
 import math #Import the math library
+import time #Import timer
 
 classNames = ["person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", "boat",
               "traffic light", "fire hydrant", "stop sign", "parking meter", "bench", "bird", "cat",
@@ -27,6 +28,12 @@ model=YOLO("../Yolo-Weights/yolov8n.pt")
 
 while True: 
     success, img=cap.read()#Read the content
+    cTime=0
+    pTime=0
+    cTime=time.time()
+    fps=int(1/(cTime-pTime))
+    pTime=cTime
+    cv2.putText(img,f"FPS: {(fps)}",(5,70),cv2.FONT_HERSHEY_PLAIN,3,(255,0,255),3)#putText(frame,text,(positionX,positionY),font,tamanho,(B,G,R),espessura)
     results=model(img, stream=True)#stream = True will use generator, which make the identification process more eficient
     for result in results:#Pass in each result
         boxes=result.boxes#Get the bouding boxes's infomation
@@ -44,5 +51,7 @@ while True:
             classIndex=int(box.cls[0])#Get the class index
             cvzone.putTextRect(img, f'{classNames[classIndex]} {conf} %', (max(x1, 0), max(y1 - 30, 0)), scale=2, thickness=2)
             #max(x, y) is a function responsable to simplesment return the max value between the values passed in the function
+    key=cv2.waitKey(1)#ESC = 27
+    if key==27:#Se apertou o ESC
+        break
     cv2.imshow("Image", img)#Show it
-    cv2.waitKey(1)#Freez the image if some key is clicked

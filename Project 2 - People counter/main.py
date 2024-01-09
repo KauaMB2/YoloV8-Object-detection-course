@@ -4,7 +4,8 @@ import cv2#Import OpenCV
 import cvzone#Import CVzone library
 import math#Import math library
 from sort import *#Import short
- 
+import time #Import timer
+
 cap = cv2.VideoCapture("../Videos/people.mp4")#Load the video file
 
 model = YOLO("../Yolo-Weights/yolov8n.pt")#Load the model
@@ -34,6 +35,12 @@ totalDown = []#Array to count the people going down
 
 while True:
     success, img = cap.read()#Read the image
+    cTime=0
+    pTime=0
+    cTime=time.time()
+    fps=int(1/(cTime-pTime))
+    pTime=cTime
+    cv2.putText(img,f"FPS: {(fps)}",(5,70),cv2.FONT_HERSHEY_PLAIN,3,(255,0,255),3)#putText(frame,text,(positionX,positionY),font,tamanho,(B,G,R),espessura)
     mask_resized = cv2.resize(mask, (img.shape[1], img.shape[0]))#Resize the mask
     imgRegion = cv2.bitwise_and(img, mask_resized)#Apply the betwise operator between the frame and the mask
  
@@ -87,10 +94,11 @@ while True:
             if totalDown.count(id) == 0:#If it doesn't have a object with this ID inside the counter array
                 totalDown.append(id) #Add this ID in the counter array
                 cv2.line(img, (limitsDown[0], limitsDown[1]), (limitsDown[2], limitsDown[3]), (0, 255, 0), 5)#Overlay the red line
- 
+
     cv2.putText(img,str(len(totalUp)),(929,345),cv2.FONT_HERSHEY_PLAIN,5,(139,195,75),7)#Put the text of the up counter
     cv2.putText(img,str(len(totalDown)),(1191,345),cv2.FONT_HERSHEY_PLAIN,5,(50,50,230),7)#Put the text of the down counter text
- 
+    key=cv2.waitKey(1)#ESC = 27
+    if key==27:#Se apertou o ESC
+        break
     cv2.imshow("Image", img)
-    cv2.imshow("ImageRegion", imgRegion)
-    cv2.waitKey(1)
+    #cv2.imshow("ImageRegion", imgRegion)
